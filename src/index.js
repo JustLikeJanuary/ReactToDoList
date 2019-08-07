@@ -40,8 +40,7 @@ state={
 
 // App title section with instructions child component
 
-class Title extends React.Component{
-  render(){
+const Title = () =>{
     let titleStyle = {
       fontSize: '2rem',
       fontWeight: 'bold',
@@ -53,7 +52,6 @@ class Title extends React.Component{
       <Instructions />
       </div>)
   }
-}
 
 // form element for inputting new tasks
 // Child to App component
@@ -77,7 +75,7 @@ class InputTask extends React.Component {
       <div style={formStyle}>
       <form onSubmit={this.handleSubmit}>
         <input type="text" 
-        size="50" maxlength="45" 
+        size="50" maxLength="45" 
         value={this.state.task} 
         onChange={event => this.setState({task: event.target.value})} 
         placeholder="Input new task (max 45 chars)" 
@@ -90,7 +88,7 @@ class InputTask extends React.Component {
 }
 
 //Task component with strikethrough on click and delete on X click
-// Child to App component
+// Child to TaskList component
 
 class Task extends React.Component {
 state = {
@@ -112,23 +110,10 @@ toggleDone = () => {(this.state.notDone) ? this.setState({notDone: false}) : thi
 }
 
 //Task list to show all tasks in a list 
+//handles add and delete of tasks
 //Issue: if task is identical to previous task, will have 2 identical keys
 
 class TaskList extends React.Component {
-  render(){
-  const items = this.props.tasks.map(i => 
-  <Task key={i} taskToDo={[...i]} removeTask={this.props.removeTask} classToggle={this.classToggle}/>);
-  return(
-  <div>
-    <ul>
-        {items} 
-    </ul>
-	</div>
-);
-    }
-  }
-
-class App extends React.Component {
   state = {
     listOfTasks: [],
   }
@@ -138,14 +123,26 @@ class App extends React.Component {
   removeTask = (task) => {this.setState({listOfTasks: this.state.listOfTasks.filter(e => e !== task.join(""))})
 };
   render(){
-    return(
+  const items = this.state.listOfTasks.map(i => 
+  <Task key={i} taskToDo={[...i]} removeTask={this.removeTask} />);
+  return(
+  <div>
+  <InputTask onSubmit={this.addTask} />
+    <ul>
+        {items} 
+    </ul>
+	</div>
+);
+    }
+  }
+
+const App = () => {return(
     <div>
         <Title />
-        <InputTask onSubmit={this.addTask} />
-        <TaskList tasks={this.state.listOfTasks} removeTask={this.removeTask}/>
-        </div>)
+        <TaskList />
+</div>);
   }
-}
+
 
 const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);
